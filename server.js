@@ -6,50 +6,21 @@ const multer = require('multer');
 const XLSX = require('xlsx');
 const fs = require('fs');
 const nodemailer = require('nodemailer');
-//const { BlobServiceClient } = require('@azure/storage-blob');
-const app = express();
-const express = require('express');
-const path = require('path');
-
-const app = express();
-const PORT = 3000;
-
-// Serve static files (optional, for CSS/JS)
-app.use(express.static(path.join(__dirname, 'public')));
-
-// Route for the homepage
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
-
-// Start the server
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-});
-
-const PORT = process.env.PORT || 3000;
-
-// Azure Blob Storage Configuration
-//const AZURE_STORAGE_CONNECTION_STRING = process.env.AZURE_STORAGE_CONNECTION_STRING;
-//const blobServiceClient = BlobServiceClient.fromConnectionString(AZURE_STORAGE_CONNECTION_STRING);
-//const containerClient = blobServiceClient.getContainerClient('staff-accounts');
 const { put, get, del } = require('@vercel/blob');
 
-// Example: Uploading a file
-async function uploadFile(file) {
-    const blob = await put(file.name, file, { access: 'public' });
-    console.log('File uploaded:', blob.url);
-}
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Middleware
+app.use(bodyParser.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.static(path.join(__dirname, 'public')));
 
 // PostgreSQL connection
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL
 });
-
-app.use(bodyParser.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
 
 // Hardcoded master account
 const MASTER_ACCOUNT = { email: 'admin@camp.com', password: 'masterpass' };
@@ -68,17 +39,6 @@ app.post('/staff-login', async (req, res) => {
   const { email, password } = req.body;
   if (email === MASTER_ACCOUNT.email && password === MASTER_ACCOUNT.password) {
     return res.json({ success: true, master: true });
-  }
-  
-  const blockBlobClient = containerClient.getBlockBlobClient(`${email}.json`);
-  try {
-    const downloadResponse = await blockBlobClient.download();
-    const downloadedData = JSON.parse(await streamToString(downloadResponse.readableStreamBody));
-    if (downloadedData.password === password) {
-      return res.json({ success: true, master: false });
-    }
-  } catch (error) {
-    console.error('Login error:', error);
   }
   res.status(401).json({ success: false });
 });
@@ -110,19 +70,12 @@ app.post('/signout', async (req, res) => {
   }
 });
 
-async function streamToString(readableStream) {
-  return new Promise((resolve, reject) => {
-    const chunks = [];
-    readableStream.on("data", (chunk) => chunks.push(chunk));
-    readableStream.on("end", () => resolve(Buffer.concat(chunks).toString()));
-    readableStream.on("error", reject);
-  });
-}
-
+// Home Route
 app.get('/', (req, res) => {
     res.send('Server is working!');
 });
 
+// Start the server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
