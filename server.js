@@ -6,7 +6,7 @@ const multer = require('multer');
 const XLSX = require('xlsx');
 const fs = require('fs');
 const nodemailer = require('nodemailer');
-const { BlobServiceClient } = require('@azure/storage-blob');
+//const { BlobServiceClient } = require('@azure/storage-blob');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -14,6 +14,13 @@ const PORT = process.env.PORT || 3000;
 const AZURE_STORAGE_CONNECTION_STRING = process.env.AZURE_STORAGE_CONNECTION_STRING;
 const blobServiceClient = BlobServiceClient.fromConnectionString(AZURE_STORAGE_CONNECTION_STRING);
 const containerClient = blobServiceClient.getContainerClient('staff-accounts');
+import { put, get, del } from '@vercel/blob';
+
+// Example: Uploading a file
+async function uploadFile(file) {
+    const blob = await put(file.name, file, { access: 'public' });
+    console.log('File uploaded:', blob.url);
+}
 
 // PostgreSQL connection
 const pool = new Pool({
