@@ -2,11 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const { Pool } = require('pg');
 const path = require('path');
-const multer = require('multer');
-const XLSX = require('xlsx');
-const fs = require('fs');
 const nodemailer = require('nodemailer');
-const { put, get, del } = require('@vercel/blob');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -15,6 +11,8 @@ const PORT = process.env.PORT || 3000;
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
+// Serve static files (Ensure HTML, CSS, JS are inside the "public" folder)
 app.use(express.static(path.join(__dirname, 'public')));
 
 // PostgreSQL connection
@@ -70,11 +68,21 @@ app.post('/signout', async (req, res) => {
   }
 });
 
-// Home Route
+// Serve HTML files
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
 
+app.get('/staff-login', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'staff-login.html'));
+});
 
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
+app.get('/staff-dashboard', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'staff_dashboard.html'));
+});
+
+app.get('/master-dashboard', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'master_dashboard.html'));
 });
 
 // Start the server
