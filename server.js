@@ -11,9 +11,9 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Azure Blob Storage Configuration
-const AZURE_STORAGE_CONNECTION_STRING = process.env.AZURE_STORAGE_CONNECTION_STRING;
-const blobServiceClient = BlobServiceClient.fromConnectionString(AZURE_STORAGE_CONNECTION_STRING);
-const containerClient = blobServiceClient.getContainerClient('staff-accounts');
+//const AZURE_STORAGE_CONNECTION_STRING = process.env.AZURE_STORAGE_CONNECTION_STRING;
+//const blobServiceClient = BlobServiceClient.fromConnectionString(AZURE_STORAGE_CONNECTION_STRING);
+//const containerClient = blobServiceClient.getContainerClient('staff-accounts');
 import { put, get, del } from '@vercel/blob';
 
 // Example: Uploading a file
