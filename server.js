@@ -1,4 +1,14 @@
 const express = require('express');
+const bodyParser = require('body-parser');
+const { Pool } = require('pg');
+const path = require('path');
+const multer = require('multer');
+const XLSX = require('xlsx');
+const fs = require('fs');
+const nodemailer = require('nodemailer');
+//const { BlobServiceClient } = require('@azure/storage-blob');
+const app = express();
+const express = require('express');
 const path = require('path');
 
 const app = express();
@@ -16,15 +26,7 @@ app.get('/', (req, res) => {
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
-const bodyParser = require('body-parser');
-const { Pool } = require('pg');
-const path = require('path');
-const multer = require('multer');
-const XLSX = require('xlsx');
-const fs = require('fs');
-const nodemailer = require('nodemailer');
-//const { BlobServiceClient } = require('@azure/storage-blob');
-const app = express();
+
 const PORT = process.env.PORT || 3000;
 
 // Azure Blob Storage Configuration
