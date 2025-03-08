@@ -14,7 +14,7 @@ const PORT = process.env.PORT || 3000;
 //const AZURE_STORAGE_CONNECTION_STRING = process.env.AZURE_STORAGE_CONNECTION_STRING;
 //const blobServiceClient = BlobServiceClient.fromConnectionString(AZURE_STORAGE_CONNECTION_STRING);
 //const containerClient = blobServiceClient.getContainerClient('staff-accounts');
-import { put, get, del } from '@vercel/blob';
+const { put, get, del } = require('@vercel/blob');
 
 // Example: Uploading a file
 async function uploadFile(file) {
