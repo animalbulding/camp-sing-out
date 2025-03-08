@@ -100,6 +100,10 @@ async function streamToString(readableStream) {
   });
 }
 
+app.get('/', (req, res) => {
+    res.send('Server is working!');
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
