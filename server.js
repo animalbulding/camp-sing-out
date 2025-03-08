@@ -71,8 +71,10 @@ app.post('/signout', async (req, res) => {
 });
 
 // Home Route
-app.get('/', (req, res) => {
-    res.send('Server is working!');
+const path = require("path");
+
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
 });
 
 // Start the server
