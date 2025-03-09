@@ -65,13 +65,28 @@
     </div>
     <button class="back-button" onclick="window.location.href='index.html'">Back to Home</button>
     <script>
-        document.getElementById("loginForm").addEventListener("submit", function(event) {
+        document.getElementById("loginForm").addEventListener("submit", async function(event) {
             event.preventDefault();
-            var password = document.getElementById("password").value;
-            if (password === "masterpassword") {
-                window.location.href = "master_dashboard.html";
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+            
+            const response = await fetch("/staff-login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password })
+            });
+            
+            const result = await response.json();
+            console.log(result); // Debugging - check what the server sends back
+            
+            if (result.success) {
+                if (result.master) {
+                    window.location.href = "/master-dashboard"; // Ensure correct redirection
+                } else {
+                    window.location.href = "/staff-dashboard";
+                }
             } else {
-                window.location.href = "staff_dashboard.html";
+                alert("Invalid login credentials");
             }
         });
     </script>
