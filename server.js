@@ -35,9 +35,22 @@ const transporter = nodemailer.createTransport({
 // Staff login route
 app.post('/staff-login', async (req, res) => {
   const { email, password } = req.body;
+  
+  // Check for master login first
   if (email === MASTER_ACCOUNT.email && password === MASTER_ACCOUNT.password) {
     return res.json({ success: true, master: true });
   }
+
+  // Check for staff login
+  try {
+    const result = await pool.query('SELECT * FROM staff WHERE email = $1 AND password = $2', [email, password]);
+    if (result.rows.length > 0) {
+      return res.json({ success: true, master: false });
+    }
+  } catch (error) {
+    console.error('Login error:', error);
+  }
+
   res.status(401).json({ success: false });
 });
 
