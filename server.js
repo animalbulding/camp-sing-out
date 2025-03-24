@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const { createBlob, getBlob } = require('@vercel/blob');
+
 const path = require('path');
 const nodemailer = require('nodemailer');
 
@@ -12,15 +12,17 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
+const { createBlob, getBlob, deleteBlob } = require('@vercel/blob');
+
 const STAFF_BLOB_NAME = 'staff-accounts.json';
 
 // Function to fetch staff data from Vercel Blob
 async function fetchStaffData() {
     try {
         const blob = await getBlob(STAFF_BLOB_NAME);
-        if (!blob) return [];
+        if (!blob || !blob.url) return []; // Handle missing or empty data
         const response = await fetch(blob.url);
-        return await response.json();
+        return response.ok ? await response.json() : [];
     } catch (error) {
         console.error('Error fetching staff data:', error);
         return [];
@@ -31,11 +33,17 @@ async function fetchStaffData() {
 async function saveStaffData(data) {
     try {
         const jsonData = JSON.stringify(data, null, 2);
+
+        // Delete existing blob before creating a new one (overwrite behavior)
+        await deleteBlob(STAFF_BLOB_NAME).catch(err => console.warn('No existing blob to delete:', err));
+
+        // Create new blob with updated data
         await createBlob(STAFF_BLOB_NAME, jsonData, { contentType: 'application/json' });
     } catch (error) {
         console.error('Error saving staff data:', error);
     }
 }
+
 
 // Hardcoded master account
 const MASTER_ACCOUNT = { email: 'admin@camp.com', password: 'masterpass' };
